@@ -1,0 +1,421 @@
+{
+  "name": "cnx-agent",
+  "displayName": "Cnx Agent",
+  "description": "Powerful agentic AI development platform with Mission Control, multi-agent orchestration, browser automation, and autonomous testing",
+  "version": "0.2.0",
+  "publisher": "cnx",
+  "icon": "media/icon.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Machine Learning",
+    "Other"
+  ],
+  "keywords": [
+    "ai",
+    "assistant",
+    "agent",
+    "coding",
+    "gemini",
+    "gpt",
+    "multi-agent",
+    "mission-control",
+    "autonomous",
+    "browser-testing",
+    "antigravity"
+  ],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "cnx.openChat",
+        "title": "Open Agent Chat",
+        "category": "Cnx",
+        "icon": "$(comment-discussion)"
+      },
+      {
+        "command": "cnx.newConversation",
+        "title": "New Conversation",
+        "category": "Cnx",
+        "icon": "$(add)"
+      },
+      {
+        "command": "cnx.openSettings",
+        "title": "Open Settings",
+        "category": "Cnx",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "cnx.clearHistory",
+        "title": "Clear Conversation History",
+        "category": "Cnx"
+      },
+      {
+        "command": "cnx.activateChat",
+        "title": "Activate Chat (Ctrl+L)",
+        "category": "Cnx"
+      },
+      {
+        "command": "cnx.reviewChanges",
+        "title": "Review Changes",
+        "category": "Cnx",
+        "icon": "$(git-compare)"
+      },
+      {
+        "command": "cnx.openAgentManager",
+        "title": "Open Agent Manager (Mission Control)",
+        "category": "Cnx",
+        "icon": "$(server-process)"
+      },
+      {
+        "command": "cnx.toggleView",
+        "title": "Toggle Editor / Agent Manager",
+        "category": "Cnx",
+        "icon": "$(split-horizontal)"
+      },
+      {
+        "command": "cnx.spawnAgent",
+        "title": "Spawn New Agent",
+        "category": "Cnx",
+        "icon": "$(rocket)"
+      },
+      {
+        "command": "cnx.runBrowserTest",
+        "title": "Run Browser Test",
+        "category": "Cnx",
+        "icon": "$(globe)"
+      },
+      {
+        "command": "cnx.switchMode",
+        "title": "Switch Development Mode",
+        "category": "Cnx",
+        "icon": "$(settings-gear)"
+      },
+      {
+        "command": "cnx.showAgentStats",
+        "title": "Show Agent Statistics",
+        "category": "Cnx",
+        "icon": "$(graph)"
+      },
+      {
+        "command": "cnx.toggleSelfHealing",
+        "title": "Toggle Self-Healing (Auto Error Fix)",
+        "category": "Cnx",
+        "icon": "$(tools)"
+      },
+      {
+        "command": "cnx.scanAndFix",
+        "title": "Scan and Fix Errors Now",
+        "category": "Cnx",
+        "icon": "$(search-refresh)"
+      },
+      {
+        "command": "cnx.viewFixHistory",
+        "title": "View Self-Healing Fix History",
+        "category": "Cnx",
+        "icon": "$(history)"
+      },
+      {
+        "command": "cnx.listOllamaModels",
+        "title": "List & Switch Ollama Models",
+        "category": "Cnx",
+        "icon": "$(server-process)"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "cnx.activateChat",
+        "key": "ctrl+l",
+        "mac": "cmd+l"
+      },
+      {
+        "command": "cnx.openChat",
+        "key": "ctrl+shift+a",
+        "mac": "cmd+shift+a"
+      },
+      {
+        "command": "cnx.toggleView",
+        "key": "ctrl+e",
+        "mac": "cmd+e"
+      },
+      {
+        "command": "cnx.spawnAgent",
+        "key": "ctrl+shift+n",
+        "mac": "cmd+shift+n"
+      },
+      {
+        "command": "cnx.openAgentManager",
+        "key": "ctrl+shift+m",
+        "mac": "cmd+shift+m"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "cnx-sidebar",
+          "title": "Cnx Agent",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "cnx-sidebar": [
+        {
+          "icon": "media/icon.svg",
+          "type": "webview",
+          "id": "cnx.chatView",
+          "name": "Chat"
+        }
+      ]
+    },
+    "menus": {
+      "editor/title": [
+        {
+          "command": "cnx.openAgentManager",
+          "group": "navigation",
+          "when": "cnx.agentManagerVisible != true"
+        },
+        {
+          "command": "cnx.toggleView",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "cnx.openAgentManager",
+          "when": "true"
+        },
+        {
+          "command": "cnx.spawnAgent",
+          "when": "true"
+        },
+        {
+          "command": "cnx.switchMode",
+          "when": "true"
+        },
+        {
+          "command": "cnx.showAgentStats",
+          "when": "true"
+        },
+        {
+          "command": "cnx.runBrowserTest",
+          "when": "true"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Cnx Agent",
+      "properties": {
+        "cnx.aiProvider": {
+          "type": "string",
+          "enum": [
+            "openai",
+            "openai-compatible",
+            "gemini",
+            "anthropic",
+            "ollama"
+          ],
+          "enumDescriptions": [
+            "OpenAI (GPT-4o, o1, etc.)",
+            "OpenAI-compatible gateway (LiteLLM, vLLM, LocalAI, etc.)",
+            "Google Gemini",
+            "Anthropic Claude",
+            "Ollama local models (llama3, mistral, qwen2, etc.)"
+          ],
+          "default": "openai",
+          "description": "AI provider to use for completions"
+        },
+        "cnx.geminiApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Google Gemini API key"
+        },
+        "cnx.openaiApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "OpenAI API key (or custom gateway key)"
+        },
+        "cnx.openaiBaseUrl": {
+          "type": "string",
+          "default": "https://api.openai.com/v1",
+          "description": "Base URL for OpenAI or OpenAI-compatible gateway (LiteLLM, vLLM, LocalAI)"
+        },
+        "cnx.ollamaBaseUrl": {
+          "type": "string",
+          "default": "http://localhost:11434",
+          "description": "Base URL for the Ollama server (default: http://localhost:11434)"
+        },
+        "cnx.ollamaRequestTimeout": {
+          "type": "number",
+          "default": 120000,
+          "description": "Request timeout in milliseconds for Ollama API calls (default: 120s)"
+        },
+        "cnx.ollamaAutoDiscover": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically discover available Ollama models on startup"
+        },
+        "cnx.anthropicApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Anthropic API key"
+        },
+        "cnx.model": {
+          "type": "string",
+          "default": "ai-assistant-gpt-4o",
+          "description": "AI model to use"
+        },
+        "cnx.temperature": {
+          "type": "number",
+          "default": 0.7,
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Temperature for AI responses"
+        },
+        "cnx.maxTokens": {
+          "type": "number",
+          "default": 8000,
+          "description": "Maximum tokens for AI responses"
+        },
+        "cnx.streamingEnabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable streaming responses"
+        },
+        "cnx.autoExecuteSafeCommands": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically execute safe commands without confirmation"
+        },
+        "cnx.enableBrowserAutomation": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable browser automation features"
+        },
+        "cnx.enableKnowledgeSystem": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable knowledge management system"
+        },
+        "cnx.maxConversationHistory": {
+          "type": "number",
+          "default": 50,
+          "description": "Maximum number of conversations to keep in history"
+        },
+        "cnx.developmentMode": {
+          "type": "string",
+          "enum": [
+            "autopilot",
+            "review",
+            "assisted"
+          ],
+          "enumDescriptions": [
+            "Full autonomy - Agent writes code, runs commands, and tests automatically without asking permission",
+            "Maximum control - Agent asks permission before almost any action",
+            "Balanced (Recommended) - Safe automations execute automatically, dangerous commands need approval"
+          ],
+          "default": "assisted",
+          "description": "Development mode controlling agent autonomy level"
+        },
+        "cnx.maxConcurrentAgents": {
+          "type": "number",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 20,
+          "description": "Maximum number of agents that can run simultaneously"
+        },
+        "cnx.agentManagerDefaultView": {
+          "type": "string",
+          "enum": [
+            "grid",
+            "list"
+          ],
+          "default": "grid",
+          "description": "Default layout for Agent Manager"
+        },
+        "cnx.browserTestHeadless": {
+          "type": "boolean",
+          "default": true,
+          "description": "Run browser tests in headless mode"
+        },
+        "cnx.browserTestViewport": {
+          "type": "object",
+          "default": {
+            "width": 1280,
+            "height": 720
+          },
+          "properties": {
+            "width": {
+              "type": "number",
+              "default": 1280
+            },
+            "height": {
+              "type": "number",
+              "default": 720
+            }
+          },
+          "description": "Default viewport size for browser tests"
+        },
+        "cnx.enableArtifactFeedback": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Google Docs-style feedback on agent artifacts"
+        },
+        "cnx.autoScreenshotOnTest": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically take screenshots during browser tests"
+        },
+        "cnx.agentPlanApproval": {
+          "type": "boolean",
+          "default": true,
+          "description": "Require user approval on agent implementation plans before execution"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/marked": "^5.0.2",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "20.x",
+    "@types/turndown": "^5.0.6",
+    "@types/uuid": "^10.0.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "@vscode/test-electron": "^2.3.8",
+    "eslint": "^8.56.0",
+    "glob": "^10.3.10",
+    "mocha": "^10.2.0",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.3",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.30.1",
+    "@google/generative-ai": "^0.21.0",
+    "axios": "^1.13.5",
+    "highlight.js": "^11.9.0",
+    "marked": "^12.0.0",
+    "openai": "^4.67.3",
+    "playwright": "^1.48.2",
+    "turndown": "^7.2.2",
+    "uuid": "^9.0.1"
+  }
+}
