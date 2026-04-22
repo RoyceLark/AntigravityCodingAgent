@@ -68,6 +68,7 @@ export class ModelRegistry {
     private ollamaService: OllamaService;
     private cache: Map<ProviderType, ProviderStatus> = new Map();
     private cacheMaxAgeMs = 60_000; // 1 minute
+    private ollamaOfflineUntil = 0; // Cooldown for ollama checks if it's down
 
     constructor(private context: vscode.ExtensionContext) {
         const config = vscode.workspace.getConfiguration('cnx');
@@ -139,19 +140,23 @@ export class ModelRegistry {
         }
 
         // ── Ollama (local) ──────────────────────────────────────
-        try {
-            const ollamaStatus = await Promise.race([
-                this.fetchOllamaStatus(),
-                new Promise<ProviderStatus>((_, reject) =>
-                    setTimeout(() => reject(new Error('timeout')), 3000)
-                ),
-            ]) as ProviderStatus;
+        if (Date.now() > this.ollamaOfflineUntil) {
+            try {
+                const ollamaStatus = await Promise.race([
+                    this.fetchOllamaStatus(),
+                    new Promise<ProviderStatus>((_, reject) =>
+                        setTimeout(() => reject(new Error('timeout')), 1500) // Reduced to 1.5s
+                    ),
+                ]) as ProviderStatus;
 
-            if (ollamaStatus.healthy && ollamaStatus.models.length > 0) {
-                models.push(...ollamaStatus.models);
+                if (ollamaStatus.healthy && ollamaStatus.models.length > 0) {
+                    models.push(...ollamaStatus.models);
+                } else {
+                    this.ollamaOfflineUntil = Date.now() + 30000; // 30s cooldown
+                }
+            } catch {
+                this.ollamaOfflineUntil = Date.now() + 30000; // 30s cooldown
             }
-        } catch {
-            // Ollama not running – skip
         }
 
         return models;

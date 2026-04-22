@@ -102,7 +102,9 @@ export class OllamaService {
         try {
             const controller = new AbortController();
             const tid = setTimeout(() => controller.abort(), 5000);
-            const res = await fetch(`${this.baseUrl}/api/version`, { signal: controller.signal });
+            const res = await fetch(`${this.baseUrl}/api/version`, { signal: controller.signal }).catch(err => {
+                throw new Error(`Connection refused: ${err.message}`);
+            });
             clearTimeout(tid);
             if (!res.ok) {
                 return { healthy: false, error: `HTTP ${res.status}` };
@@ -111,8 +113,8 @@ export class OllamaService {
             return { healthy: true, version: body.version };
         } catch (e: any) {
             const msg = e.name === 'AbortError'
-                ? 'Connection timed out (5s). Is Ollama running?'
-                : `Cannot reach Ollama at ${this.baseUrl}: ${e.message}`;
+                ? `Connection timed out (5s). Is Ollama running at ${this.baseUrl}?`
+                : `Cannot reach Ollama at ${this.baseUrl}. Ensure Ollama is running (ollama serve).`;
             return { healthy: false, error: msg };
         }
     }
@@ -377,6 +379,12 @@ export class OllamaService {
                     }
                 }
             }
+        } catch (e: any) {
+            if (e.name === 'AbortError') throw e;
+            if (e.message?.includes('fetch failed') || e.message?.includes('refused')) {
+                throw new Error(`Ollama connection failed at ${this.baseUrl}. Ensure Ollama is running (ollama serve).`);
+            }
+            throw e;
         } finally {
             clearTimeout(tid);
         }
