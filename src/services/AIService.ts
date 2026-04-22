@@ -57,7 +57,9 @@ export class AIService {
         if (this.provider === 'ollama') {
             this.apiKey = '';
             const ollamaUrl = config.get<string>('ollamaBaseUrl') || 'http://localhost:11434';
+            const ollamaTimeout = config.get<number>('ollamaRequestTimeout') || 300000;
             this.ollamaService.updateBaseUrl(ollamaUrl);
+            this.ollamaService.updateTimeout(ollamaTimeout);
             this.baseUrl = ollamaUrl;
         } else if (this.provider === 'gemini') {
             this.apiKey = envKey || config.get<string>('geminiApiKey') || '';

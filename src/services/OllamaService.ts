@@ -78,7 +78,7 @@ export class OllamaService {
     private baseUrl: string;
     private requestTimeout: number;
 
-    constructor(baseUrl: string = 'http://localhost:11434', requestTimeout: number = 120000) {
+    constructor(baseUrl: string = 'http://localhost:11434', requestTimeout: number = 300000) {
         this.baseUrl = baseUrl.replace(/\/$/, '');
         this.requestTimeout = requestTimeout;
     }
@@ -89,6 +89,10 @@ export class OllamaService {
 
     public updateBaseUrl(baseUrl: string): void {
         this.baseUrl = baseUrl.replace(/\/$/, '');
+    }
+
+    public updateTimeout(timeoutMs: number): void {
+        this.requestTimeout = timeoutMs;
     }
 
     /**
